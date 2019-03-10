@@ -13,18 +13,20 @@
 <script>
   const axios = require('axios');
 
-  let url = "https://nuxt-firebase-app-5b6cc.firebaseio.com/person/";
+  let url = "https://nuxt-firebase-app-5b6cc.firebaseio.com/person.json?orderBy=%22$key%22&equalTo=%22";
 
   export default {
     data: function(){
       return {
         title: 'Axios',
+        find: '',
         message: 'axios sample',
+        json_data: {},
       };
     },
     methods: {
       getData: function(){
-        let id_url = url + this.find + '.json';
+        let id_url = url + this.find + '%22';
         axios.get(id_url).then((res) => {
           this.message = 'get ID=' + this.find;
           this.json_data = res.data;
