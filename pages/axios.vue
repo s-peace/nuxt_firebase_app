@@ -2,23 +2,51 @@
   <section class="container">
     <h1>{{title}}</h1>
     <p>{{message}}</p>
+    <table>
+      <tr>
+        <th>Email</th>
+        <td><input v-model="email"></td>
+      </tr>
+      <tr>
+        <th>Name</th>
+        <td><input v-model="username"></td>
+      </tr>
+      <tr>
+        <th>Age</th>
+        <td><input type="number" v-model="age"></td>
+      </tr>
+      <tr>
+        <th>Tel</th>
+        <td><input v-model="tel"></td>
+      </tr>
+      <tr>
+        <th></th>
+        <td><button @click="addData">Add</button></td>
+      </tr>
+    </table>
     <input v-model="find">
     <button @click="getData">find</button>
     <ul v-for="(data,key) in json_data">
       <li><strong>{{key}}</strong><br>{{data}}</li>
     </ul>
+    
+
   </section>
 </template>
 
 <script>
   const axios = require('axios');
 
-  let url = "https://nuxt-firebase-app-5b6cc.firebaseio.com/person.json?orderBy=%22age%22";
+  let url = "https://nuxt-firebase-app-5b6cc.firebaseio.com/person";
 
   export default {
     data: function(){
       return {
         title: 'Axios',
+        email: '',
+        username: '',
+        tel: '',
+        age: 0,
         find: '',
         message: 'axios sample',
         json_data: {},
@@ -26,18 +54,46 @@
     },
     methods: {
       getData: function(){
-        let range = this.find.split(',');
-        let age_url = url + "&startAt=" + range[0]
-          + "&endAt=" + range[1];
-        axios.get(age_url).then((res) => {
-          this.message = 'get: ' + range[0] + ' < age < ' + range[1];
+        // let range = this.find;
+        // let age_url = url + "&startAt=" + range[0]
+          // + "&endAt=" + range[1]
+          ;
+        let find_url = url + ".json?orderBy=%22$key%22&equalTo=%22";
+        axios.get(find_url + this.find + '%22').then((res) => {
+          // this.message = 'get: ' + range[0] + ' < age < ' + range[1];
+          this.message = 'get find data';
           this.json_data = res.data;
-      }).catch((error) => {
-        this.message = 'ERROR';
-        this.json_data = {};
-      });
+        }).catch((error) => {
+          this.message = 'ERROR';
+          this.json_data = {};
+        });
+      },
+      getAllData: function(){
+        let all_url = url + '.json'; 
+        axios.get(all_url).then((res) => {
+          this.message = "get all data!";
+          this.json_data = res.data;
+        })
+      },
+      addData: function(){
+        let add_url = url + '/' + this.email + '.json';
+        let data = {
+          'name': this.username,
+          'age':this.age,
+          'tel':this.tel
+        };
+        axios.put(add_url,data).then((re) => {
+          this.email = '';
+          this.age = 0;
+          this.tel = '';
+          this.tel = '';
+          this.getData();
+        });
+      }
+    },
+    created: function(){
+      this.getAllData();
     }
-  }
 }
 </script>
 
