@@ -23,9 +23,22 @@
         <th></th>
         <td><button @click="addData">Add</button></td>
       </tr>
+      <tr>
+        <th></th>
+        <td>
+            <button @click="getData">find</button>
+            <input v-model="find">
+        </td>
+      </tr>
+      <tr>
+        <th></th>
+        <td>
+          <button @click="deleteData">Delete</button>
+          <input v-model="email"></td>
+      </tr>
     </table>
-    <input v-model="find">
-    <button @click="getData">find</button>
+    
+    
     <ul v-for="(data,key) in json_data">
       <li><strong>{{key}}</strong><br>{{data}}</li>
     </ul>
@@ -86,10 +99,17 @@
           this.email = '';
           this.age = 0;
           this.tel = '';
-          this.tel = '';
-          this.getData();
+          this.getAllData();
         });
-      }
+      },
+      deleteData: function(){
+        let del_url = url + '/' +this.email + '.json';
+        axios.delete(del_url).then((res) => {
+          this.message = "this.email" + 'deleted';
+          this.email = '';
+          this.getAllData();
+        });
+      },
     },
     created: function(){
       this.getAllData();
