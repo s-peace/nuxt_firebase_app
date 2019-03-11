@@ -21,13 +21,13 @@
       </tr>
       <tr>
         <th></th>
-        <td><button @click="addData">Add</button></td>
+        <td><button @click="addData">Add/Update</button></td>
       </tr>
       <tr>
         <th></th>
         <td>
-            <button @click="getData">find</button>
-            <input v-model="find">
+            <button @click="getData">Search</button>
+            <input v-model="search">
         </td>
       </tr>
       <tr>
@@ -48,11 +48,33 @@
 </template>
 
 <script>
+  import firebase from 'firebase';
   const axios = require('axios');
 
   let url = "https://nuxt-firebase-app-5b6cc.firebaseio.com/person";
 
   export default {
+    created: function(){
+      // Initialize Firebase
+      let config = {
+        apiKey: "AIzaSyCCHSPN89TWX8IYpd5zRzSAytRhRDueMP0",
+        authDomain: "nuxt-firebase-app-5b6cc.firebaseapp.com",
+        databaseURL: "https://nuxt-firebase-app-5b6cc.firebaseio.com",
+        projectId: "nuxt-firebase-app-5b6cc",
+        storageBucket: "nuxt-firebase-app-5b6cc.appspot.com",
+        messagingSenderId: "836571126469"
+      };
+      firebase.initializeApp(config);
+
+      let provider = new firebase.auth.GoogleAuthProvider();
+      let self = this;
+      firebase.auth().signInWithPopup(provider).then(function(result) {
+        self.message = result.user.displayName + ', '
+        + result.user.email;
+      })
+
+      this.getAllData();
+    },
     data: function(){
       return {
         title: 'Axios',
@@ -60,21 +82,21 @@
         username: '',
         tel: '',
         age: 0,
-        find: '',
+        search: '',
         message: 'axios sample',
         json_data: {},
       };
     },
     methods: {
       getData: function(){
-        // let range = this.find;
+        // let range = this.search;
         // let age_url = url + "&startAt=" + range[0]
           // + "&endAt=" + range[1]
           ;
-        let find_url = url + ".json?orderBy=%22$key%22&equalTo=%22";
-        axios.get(find_url + this.find + '%22').then((res) => {
+        let search_url = url + ".json?orderBy=%22$key%22&equalTo=%22";
+        axios.get(search_url + this.search + '%22').then((res) => {
           // this.message = 'get: ' + range[0] + ' < age < ' + range[1];
-          this.message = 'get find data';
+          this.message = 'get search data';
           this.json_data = res.data;
         }).catch((error) => {
           this.message = 'ERROR';
@@ -111,9 +133,6 @@
         });
       },
     },
-    created: function(){
-      this.getAllData();
-    }
 }
 </script>
 
