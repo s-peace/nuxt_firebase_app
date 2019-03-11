@@ -105,7 +105,7 @@
       deleteData: function(){
         let del_url = url + '/' +this.email + '.json';
         axios.delete(del_url).then((res) => {
-          this.message = "this.email" + 'deleted';
+          this.message = "this.email" + 'deleted!';
           this.email = '';
           this.getAllData();
         });
